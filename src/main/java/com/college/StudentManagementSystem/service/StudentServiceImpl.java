@@ -18,6 +18,9 @@ public class StudentServiceImpl implements StudentService {
 
     @Override
     public StudentDTO createStudent(StudentDTO studentDTO) {
+        studentDTO.setStudentName(studentDTO.getStudentName().trim());
+        studentDTO.setMailId(studentDTO.getMailId().trim());
+        studentDTO.setCourse(studentDTO.getCourse().trim());
         Student student = StudentMapper.toEntity(studentDTO);
         return StudentMapper.toDTO(repository.save(student));
     }
@@ -36,16 +39,17 @@ public class StudentServiceImpl implements StudentService {
     @Override
     public StudentDTO updateStudent(Long id, StudentDTO studentDTO) {
 
-        Student student = StudentMapper.toEntity(getStudentById(id));
+        Student student = repository.findById(id).orElseThrow(() -> new RuntimeException("id not found"));
         student.setName(studentDTO.getStudentName());
-        student.setEmail(student.getEmail());
-        student.setCourse(student.getCourse());
+        student.setEmail(studentDTO.getMailId());
+        student.setCourse(studentDTO.getCourse());
         return StudentMapper.toDTO(repository.save(student));
     }
 
     @Override
     public String deleteStudent(Long id) {
-        repository.deleteById(id);
+        Student student = repository.findById(id).orElseThrow(() -> new RuntimeException("id not found"));
+        repository.delete(student);
         return "deleted :)";
     }
 
