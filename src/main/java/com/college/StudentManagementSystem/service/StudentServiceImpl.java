@@ -7,6 +7,7 @@ import com.college.StudentManagementSystem.repository.StudentRepository;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Objects;
 
 @Service
 public class StudentServiceImpl implements StudentService {
@@ -18,10 +19,20 @@ public class StudentServiceImpl implements StudentService {
 
     @Override
     public StudentDTO createStudent(StudentDTO studentDTO) {
-        studentDTO.setStudentName(studentDTO.getStudentName().trim());
-        studentDTO.setMailId(studentDTO.getMailId().trim());
-        studentDTO.setCourse(studentDTO.getCourse().trim());
-        Student student = StudentMapper.toEntity(studentDTO);
+
+        Objects.requireNonNull(studentDTO,"Student should not be null");
+
+        String name=studentDTO.getStudentName().trim();
+        String mailId =studentDTO.getMailId().trim().toLowerCase();
+        String course =studentDTO.getCourse().trim();
+        if(repository.existsByEmail(mailId)){
+            throw new RuntimeException("Email already exists");
+        }
+        Student student = new Student();
+        student.setName(name);
+        student.setEmail(mailId);
+        student.setCourse(course);
+
         return StudentMapper.toDTO(repository.save(student));
     }
 

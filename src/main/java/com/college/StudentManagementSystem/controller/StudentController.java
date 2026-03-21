@@ -3,8 +3,12 @@ package com.college.StudentManagementSystem.controller;
 import com.college.StudentManagementSystem.dto.StudentDTO;
 import com.college.StudentManagementSystem.service.StudentService;
 import jakarta.validation.Valid;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
+import java.net.URI;
 import java.util.List;
 
 @CrossOrigin(origins = "http://localhost:5173")
@@ -19,27 +23,35 @@ public class StudentController {
     }
 
     @PostMapping("/students")
-    StudentDTO create(@Valid @RequestBody StudentDTO studentDTO) {
-        return services.createStudent(studentDTO);
+    ResponseEntity<StudentDTO> create(@Valid @RequestBody StudentDTO studentDTO) {
+        StudentDTO stuDTO = services.createStudent(studentDTO);
+
+        URI uri = ServletUriComponentsBuilder
+                .fromCurrentRequest()
+                .path("/{id}")
+                .buildAndExpand(stuDTO.getId())
+                .toUri();
+
+        return ResponseEntity.created(uri).body(stuDTO);
     }
 
     @GetMapping("/students")
-    List<StudentDTO> getStudents() {
-        return services.getAllStudentsList();
+    ResponseEntity<List<StudentDTO>> getStudents() {
+        return new ResponseEntity<>(services.getAllStudentsList(), HttpStatus.OK);
     }
 
     @GetMapping("/students/{id}")
-    StudentDTO getStudentById(@PathVariable Long id) {
-        return services.getStudentById(id);
+    ResponseEntity<StudentDTO> getStudentById(@PathVariable Long id) {
+        return new ResponseEntity<>(services.getStudentById(id), HttpStatus.OK);
     }
 
     @PutMapping("/students/{id}")
-    StudentDTO modifyStudent(@PathVariable Long id, @Valid @RequestBody StudentDTO studentDTO) {
-        return services.updateStudent(id, studentDTO);
+    ResponseEntity<StudentDTO> modifyStudent(@PathVariable Long id, @Valid @RequestBody StudentDTO studentDTO) {
+        return new ResponseEntity<>(services.updateStudent(id, studentDTO), HttpStatus.OK);
     }
 
     @DeleteMapping("/students/{id}")
-    String removeStudent(@PathVariable Long id) {
-        return services.deleteStudent(id);
+    ResponseEntity<String> removeStudent(@PathVariable Long id) {
+        return new ResponseEntity<>(services.deleteStudent(id), HttpStatus.OK);
     }
 }
