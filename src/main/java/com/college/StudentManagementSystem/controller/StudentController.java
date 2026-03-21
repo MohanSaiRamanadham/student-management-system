@@ -2,10 +2,12 @@ package com.college.StudentManagementSystem.controller;
 
 import com.college.StudentManagementSystem.dto.StudentDTO;
 import com.college.StudentManagementSystem.service.StudentService;
+import jakarta.validation.Valid;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
+@CrossOrigin(origins = "http://localhost:5173")
 @RestController
 @RequestMapping("school")
 public class StudentController {
@@ -16,8 +18,8 @@ public class StudentController {
         this.services = services;
     }
 
-    @PostMapping("/create/new/student")
-    StudentDTO create(@RequestBody StudentDTO studentDTO) {
+    @PostMapping("/students")
+    StudentDTO create(@Valid @RequestBody StudentDTO studentDTO) {
         return services.createStudent(studentDTO);
     }
 
@@ -26,18 +28,18 @@ public class StudentController {
         return services.getAllStudentsList();
     }
 
-    @GetMapping("/student/{id}")
+    @GetMapping("/students/{id}")
     StudentDTO getStudentById(@PathVariable Long id) {
         return services.getStudentById(id);
     }
 
-    @PutMapping("/update/student/{id}")
-    StudentDTO modifyStudent(@PathVariable Long id, @RequestBody StudentDTO studentDTO) {
+    @PutMapping("/students/{id}")
+    StudentDTO modifyStudent(@PathVariable Long id, @Valid @RequestBody StudentDTO studentDTO) {
         return services.updateStudent(id, studentDTO);
     }
 
-    @DeleteMapping("/delete/{id}")
-    String RemoveStudent(@PathVariable Long id) {
+    @DeleteMapping("/students/{id}")
+    String removeStudent(@PathVariable Long id) {
         return services.deleteStudent(id);
     }
 }
